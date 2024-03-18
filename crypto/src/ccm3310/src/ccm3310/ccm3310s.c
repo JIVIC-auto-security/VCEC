@@ -253,7 +253,7 @@ void ccm3310s_GetVersion(void)
 #endif      
 
   //read
-  printf("spi read \r\n ");
+  //DEBUG("spi read \r\n ");
   ret = transfer(spifd, FILLBuf, CCM3310_ReadBuf, (16 + 80 + 4));
   if (-1 == ret)
   {

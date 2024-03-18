@@ -12,9 +12,9 @@
 #ifndef CCM3310S_H_
 #define CCM3310S_H_
 
-#include "../../drivers/drvlib.h"
+#include "../drivers/drvlib.h"
 
-#define USB_READY_IO    0   //    1  use    0 not use
+#define USB_READY_IO    1   //    1  use    0 not use
 
 
 //function id
