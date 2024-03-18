@@ -45,6 +45,9 @@ SET(CCM3310STEST_SRC		./src/drivers/drvlib_simos_timer.c
 				./src/drivers/drvlib_ccm3310s.c				
 
 				./src/ccm3310/crc32.c
+				./src/ccm3310/com.c
+				./src/ccm3310/basic.c
+				./src/ccm3310/key.c
 				./src/ccm3310/ccm3310s.c				
 
 				./src/app/ccm3310s_test.c) 
