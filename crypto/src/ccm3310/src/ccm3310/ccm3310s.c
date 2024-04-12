@@ -17,10 +17,6 @@
 #include "ccm3310s.h"
 
 
-
-
-
-
 //-------------------------------------------------------------------------------------------------//
 //国标文档中的示范值
 //32 Bytes
@@ -195,6 +191,8 @@ uint8_t Hash_Init(uint8_t P1,uint8_t* p_BLOCK_len ,uint8_t* pro_Buf ,uint8_t* me
   uint8_t cnt = 0;
   uint8_t ret = 0;
   int i = 0;
+
+  DEBUG("\r\n run Hash_Init fucntion \r\n");
 
 #if( USB_READY_IO == 1 )
   ccm3310s_Check_Ready();
@@ -1033,7 +1031,7 @@ void Hash_image(uint32_t* Input_Message, uint32_t Package_Len,uint32_t Each_hash
 //message_len 消息长度
 void Hash_Once(uint8_t P1,uint8_t* Input_Message, uint32_t message_len,uint8_t* OutPut_Hash)
 {
-  uint8_t cnt = 0;
+  uint32_t cnt = 0;
   uint8_t ret = 0;
   uint32_t i = 0;
 
@@ -1061,7 +1059,6 @@ void Hash_Once(uint8_t P1,uint8_t* Input_Message, uint32_t message_len,uint8_t* 
 
   ins = Hash_Once_INS;
  
-
 	//head
 	CCM3310_WriteBuf[cnt++] = 0x53;
 	CCM3310_WriteBuf[cnt++] = 0x02;
@@ -1105,6 +1102,8 @@ void Hash_Once(uint8_t P1,uint8_t* Input_Message, uint32_t message_len,uint8_t* 
     printf("transfer error...\n");
   }
 
+  Write_analyse();
+
   //----------------------------------------------------------------//
 #if( USB_READY_IO == 1 )
   ccm3310s_Check_Ready();
@@ -1118,8 +1117,7 @@ void Hash_Once(uint8_t P1,uint8_t* Input_Message, uint32_t message_len,uint8_t* 
   {
     printf("transfer error...\n");
   }
-  //-------------------------------------------------//
-	 
+  //-------------------------------------------------//	 
 	
 	//read
 	for(i=0;i<16;i++)    //read bytes!
@@ -1136,6 +1134,7 @@ void Hash_Once(uint8_t P1,uint8_t* Input_Message, uint32_t message_len,uint8_t* 
 	}	
 
 	//------------------------------------------------------//
+  
 	Read_analyse();
 }
 

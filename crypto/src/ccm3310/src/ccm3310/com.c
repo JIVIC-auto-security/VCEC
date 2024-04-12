@@ -9,6 +9,11 @@
 */
 #include "com.h"
 
+
+
+uint8_t test_data[TEST_DATA_SIZE];
+
+
 uint8_t ins;     //function ID  (only part)
 
 uint8_t CCM3310_WriteBuf[4096];    // send the data to ccm3310
@@ -29,6 +34,8 @@ void Write_analyse(void)
     printf("GetSN");
   else if (ins == GetRandom_INS)
     printf("GetRandom");
+  else if (ins == Hash_Once_INS)
+    printf("Hash_Once");
   else if (ins == Hash_Init_INS)
     printf("Hash_Init");
   else if (ins == Hash_Update_INS)
@@ -49,7 +56,7 @@ void Write_analyse(void)
   length = MAKE_LONG(LO_WORD_len, HI_WORD_len);
   //-----------------------------------------//
 
-  printf("包头占固定4字节: \t");
+  printf("Fixed 4 byte in Head: \t");
   for (i = 0; i < 4; i++)
   {
     printf("%02X ", CCM3310_WriteBuf[cnt]);
@@ -57,16 +64,16 @@ void Write_analyse(void)
   }
   printf("\r\n");
 
-  printf("数据长度占4字节 \t");
+  printf("data length take up 4  bytes \t");
   for (i = 0; i < 4; i++)
   {
     printf("%02X ", CCM3310_WriteBuf[cnt]);
     cnt++;
   }
 
-  printf("// %d 个字节 \r\n", length);
+  printf("// %d bytes \r\n", length);
 
-  printf("命令字段占4字节: \t\t");
+  printf("command take up4 bytes: \t\t");
   for (i = 0; i < 4; i++)
   {
     printf("%02X ", CCM3310_WriteBuf[cnt]);
@@ -74,7 +81,7 @@ void Write_analyse(void)
   }
   printf("\r\n");
 
-  printf("保留字段占4字节: \t\t");
+  printf("reserve data part tack up 4 bytes: \t\t");
   for (i = 0; i < 4; i++)
   {
     printf("%02X ", CCM3310_WriteBuf[cnt]);
@@ -85,13 +92,13 @@ void Write_analyse(void)
   //----------------------------------------------//
   if (CCM3310_WriteBuf[9] == 0x48)  //hash init
   {
-    printf("无数据区:	\r\n");
+    printf("no data part \r\n");
   }
   else if (CCM3310_WriteBuf[9] == 0x4A)  //hash update
   {
-    printf("数据部分:	\r\n");
+    printf("data part:	\r\n");
 
-    printf("已处理长度:	\r\n");
+    printf("already process data len:	\r\n");
     for (i = 0; i < 8; i++)
     {
       printf("%02X ", CCM3310_WriteBuf[cnt]);
@@ -192,11 +199,9 @@ void Write_analyse(void)
 
   }
 
-
-
   //----------------------------------------------//
 
-  printf("下行包尾固定4字节: \t");
+  printf("tail data 4 bytes: \t");
   for (i = 0; i < 4; i++)
   {
     printf("%02X ", CCM3310_WriteBuf[cnt]);
@@ -338,6 +343,22 @@ void Read_analyse(void)
   DEBUG("Read_analyse end-------------------------------------- \r\n");
 }
 
+
+
+void printf_HexBuf(uint8_t* ram, uint32_t n)
+{
+  uint32_t i;
+
+  DEBUG("HEX:");
+
+  for (i = 0; i < n; i++)
+  {
+    DEBUG("%02X ", ram[i]);
+
+  }
+
+  DEBUG("\r\n");
+}
 
 
 

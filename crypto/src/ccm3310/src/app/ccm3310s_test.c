@@ -8,16 +8,17 @@
 * @par Copyright(c):
 */
 
-
+#include "../ccm3310/basic.h"
 #include "../ccm3310/ccm3310s.h"
 
 
 #define  USAGE()    fprintf(stderr, "usage:\n"  \
-                "    %s <1|2|...>\n"  , argv[0])
+                "    %s <GetVersion          "   \
+                    "  |2|...>\n"  , argv[0])
 
 int main(int argc, char* argv[])
 {
-  printf("ccm3310s_test test V0.1 \r\n");
+  printf("ccm3310s_test test V0.0.2 \r\n");
 
   /* 校验传参 */
   if (2 > argc) {
@@ -27,12 +28,29 @@ int main(int argc, char* argv[])
   led_init();
   ccm3310s_Init();
 
-  if (!strcmp(argv[1], "1")) {
+  if (!strcmp(argv[1], "GetVersion")) {
     ccm3310s_GetVersion();    
   }
-  else if (!strcmp(argv[1], "2")) {
+  else if (!strcmp(argv[1], "GetSN")) {
+    ccm3310s_GetSN(chip_SN);
+
+    printf_HexBuf(chip_SN,sizeof(chip_SN));
+  }
+  else if (!strcmp(argv[1], "GetRandom")) {
     ccm3310s_GetRandom();
   }
+  //else if (!strcmp(argv[1], "Hash_Once")) {
+  //  Hash_Once(4, test_data,sizeof(test_data), Computed_Hash);
+
+  //  printf_HexBuf(Computed_Hash, sizeof(Computed_Hash));
+  //}
+  //else if (!strcmp(argv[1], "Hash_LargeData")) {
+
+  //  Hash_Package(test_data,sizeof(test_data),192, Computed_Hash);
+
+  //  printf_HexBuf(Computed_Hash, sizeof(Computed_Hash));
+  //}
+
   else if (!strcmp(argv[1], "3")) {
    for(int i=0;i<MESSAGE_SIZE;i++)
 	{

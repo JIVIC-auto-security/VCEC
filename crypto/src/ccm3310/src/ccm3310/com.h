@@ -56,6 +56,9 @@
 #define HASH_FINAL_MAXSIZE        4056  //实测下发的数据区部分不能超过4K  8+32+message_len  ,  message_len 最大4056
 //-------------------------------------------------------//
 
+#define TEST_DATA_SIZE  2048
+extern uint8_t test_data[TEST_DATA_SIZE];
+
 extern uint8_t ins;     //function ID  (only part)
 
 extern uint8_t CCM3310_WriteBuf[4096];    // send the data to ccm3310
@@ -66,7 +69,7 @@ extern uint8_t CCM3310_ReadBuf[1024];    // receive the data from ccm3310
 void Write_analyse(void);   // 解析Hash_Update    Hash_Final  不正常
 void Read_analyse(void);
 
-
+void printf_HexBuf(uint8_t* ram, uint32_t n);
 
 #endif
 
