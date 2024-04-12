@@ -39,31 +39,31 @@ int main(int argc, char* argv[])
   else if (!strcmp(argv[1], "GetRandom")) {
     ccm3310s_GetRandom();
   }
-  //else if (!strcmp(argv[1], "Hash_Once")) {
-  //  Hash_Once(4, test_data,sizeof(test_data), Computed_Hash);
+  else if (!strcmp(argv[1], "Hash_Once")) {
+    Hash_Once(4, test_data,sizeof(test_data), Computed_Hash);
 
-  //  printf_HexBuf(Computed_Hash, sizeof(Computed_Hash));
-  //}
-  //else if (!strcmp(argv[1], "Hash_LargeData")) {
-
-  //  Hash_Package(test_data,sizeof(test_data),192, Computed_Hash);
-
-  //  printf_HexBuf(Computed_Hash, sizeof(Computed_Hash));
-  //}
-
-  else if (!strcmp(argv[1], "3")) {
-   for(int i=0;i<MESSAGE_SIZE;i++)
-	{
-		Message[i] = (i%256);
-	}
-
-   Hash_Package(Message, MESSAGE_SIZE, 1024, Computed_Hash);
+    printf_HexBuf(Computed_Hash, sizeof(Computed_Hash));
   }
+ // else if (!strcmp(argv[1], "Hash_Package")) {
+ //  for(int i=0;i<MESSAGE_SIZE;i++)
+	//{
+	//	Message[i] = (i%256);
+	//}
+
+ //  Hash_Package(Message, MESSAGE_SIZE, 1024, Computed_Hash);
+
+ //  printf_HexBuf(Computed_Hash, sizeof(Computed_Hash));
+ // }
   else if (!strcmp(argv[1], "4")) {
     SM2_Import_Key(Known_SM2_Public_Key,Known_SM2_Private_Key,1);  
   }
   else if (!strcmp(argv[1], "5")) {
     //My_SM2_Calc_HASH(Rec_TargetData_Buf, Data_Sign_Offset, 1, Computed_Hash); //SM2 data hashÔ¤´¦Àí
+  }
+  else
+  {
+    USAGE();
+    exit(-1);
   }
 
 
