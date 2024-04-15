@@ -44,16 +44,16 @@ int main(int argc, char* argv[])
 
     printf_HexBuf(Computed_Hash, sizeof(Computed_Hash));
   }
- // else if (!strcmp(argv[1], "Hash_Package")) {
- //  for(int i=0;i<MESSAGE_SIZE;i++)
-	//{
-	//	Message[i] = (i%256);
-	//}
+  else if (!strcmp(argv[1], "Hash_Package")) {
+   for(int i=0;i<MESSAGE_SIZE;i++)
+	{
+		Message[i] = (i%256);
+	}
 
- //  Hash_Package(Message, MESSAGE_SIZE, 1024, Computed_Hash);
+   Hash_Package(Message, MESSAGE_SIZE, 1024, Computed_Hash);
 
- //  printf_HexBuf(Computed_Hash, sizeof(Computed_Hash));
- // }
+   printf_HexBuf(Computed_Hash, sizeof(Computed_Hash));
+  }
   else if (!strcmp(argv[1], "4")) {
     SM2_Import_Key(Known_SM2_Public_Key,Known_SM2_Private_Key,1);  
   }
