@@ -31,6 +31,8 @@
 #define Import_Key_INS        0x5C
 
 #define SM2_Encrypt_INS       0x64
+#define SM2_Decrypt_INS       0x66
+
 
 #define SM2_Seed_Sign_INS     0x6E
 

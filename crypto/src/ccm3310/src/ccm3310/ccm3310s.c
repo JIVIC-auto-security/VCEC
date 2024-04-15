@@ -2269,14 +2269,12 @@ void SM2_Encrypt(void)
   CCM3310_WriteBuf[cnt++] = 0x10;
   CCM3310_WriteBuf[cnt++] = 0x33;
 
-
   //length
   CCM3310_WriteBuf[cnt++] = 0x46; // 70
   CCM3310_WriteBuf[cnt++] = 0x00;
   CCM3310_WriteBuf[cnt++] = 0x00;
   CCM3310_WriteBuf[cnt++] = 0x00;
 	
-
   //cmd
   CCM3310_WriteBuf[cnt++] = 0x80; // CLA
   CCM3310_WriteBuf[cnt++] = SM2_Encrypt_INS;
@@ -2328,149 +2326,92 @@ void SM2_Encrypt(void)
   {
     printf("transfer error...\n");
   }
-	
+
 	//---------------------------------------------//
-	printf("SM2加密开始! \r\n");
-	printf("下发给国芯加密芯片数据包:\r\n");
-	printf("53 02 10 33 46 00 00 00 80 64 01 00 55 55 55 55\r\n");
-	printf("F6 A6 87 AB 57 44 D5 CB BA 1C F9 3D 84 36 41 6F 75 C3 AE C3 D7 62 81 4D 56 53 14 AF F5 7A 89 F9  \r\n");
-	printf("F1 B8 EE 05 41 74 05 65 49 1E 44 04 3D E5 3C F5 BB ED D6 13 33 07 12 60 DF C5 78 3F 47 A7 B9 81 \r\n");
-	printf("02 00 00 00\r\n");
-	printf("01 02\r\n");
-	printf("55 02 33 01\r\n");
 
-	printf("\r\n分析下发数据包:\r\n");
-	printf("包头占4字节:    	53 02 10 33   \r\n");
-	printf("数据长度占4字节 :	46 00 00 00   数据段部分字节长度70个字节\r\n");
-	printf("使用数据段中密钥:	80 64 01 00 \r\n");
-	printf("保留字段占4字节:	55 55 55 55  \r\n");
-	printf("公钥64字节:		F6 A6 87 AB 57 44 D5 CB BA 1C F9 3D 84 36 41 6F 75 C3 AE C3 D7 62 81 4D 56 53 14 AF F5 7A 89 F9  \r\n");
-	printf("			F1 B8 EE 05 41 74 05 65 49 1E 44 04 3D E5 3C F5 BB ED D6 13 33 07 12 60 DF C5 78 3F 47 A7 B9 81  \r\n");
-	printf("加密数据长度占4字节:	02 00 00 00 \r\n");
-	printf("加密原始数据: 		01 02 \r\n");
-	printf("下发包尾:		55 02 33 01  \r\n");
+  Write_analyse();
 
-	//printf
-	printf("\r\n国芯加密芯片加密上行回复数据包 \r\n");
-	for(i=0;i<16;i++)
-	{
-		printf("%02x ",readbuf[i]);
-	}
-	printf("\r\n");
-
-//	printf("Encrypt data  \r\n");
-	for(i=0;i<98;i++)
-	{
-		printf("%02x ",readbuf[16+i]);
-		Computed_EncryptData[i] = readbuf[16+i];  //save in buf
-	}
-	printf("\r\n");
-
-	for(i=0;i<4;i++)
-	{
-		printf("%02x ",readbuf[16+98+i]);
-	}
-	printf("\r\n");
-
-	printf("\r\n分析上行回复数据包:\r\n");
-	printf("包头占4字节:    	52 02 10 33   \r\n");
-	printf("数据长度占4字节 :	62 00 00 00  数据段部分字节长度98个字节\r\n");
-	printf("状态字占2字节:	    	00 90  	表示加密成功\r\n");
-	printf("保留字段6字节:	    	5A 5A 5A 5A 5A 5A  \r\n");
-	printf("加密结果数据98个字节:	 \r\n");
-
-	for(i=0;i<98;i++)
-	{
-		printf("%02x ",readbuf[16+i]);
-		Computed_EncryptData[i] = readbuf[16+i];  //save in buf
-	}
-	printf("\r\n");
-
-	printf("上行包尾:		56 02 33 01   \r\n");
-
-	printf("SM2 加密成功! \r\n\r\n");
-
-
-	printf("-----------------------------------------------------------------\r\n");
-
+  Read_analyse();
 }
 
 void SM2_Decrypt(void)
 {
+  uint8_t cnt = 0;
+  uint8_t ret = 0;
+
 	uint8_t readbuf[100];
 	uint8_t i;
 
 	ccm3310s_Check_Ready();
 
-	/*1. 拉低片选*/
-	 
+  ins = SM2_Decrypt_INS;	 
 
-	//head
-	SPI_ReadWriteOneByte(0x53);
-	SPI_ReadWriteOneByte(0x02);
-	SPI_ReadWriteOneByte(0x10);
-	SPI_ReadWriteOneByte(0x33);
+  //head
+  CCM3310_WriteBuf[cnt++] = 0x53;
+  CCM3310_WriteBuf[cnt++] = 0x02;
+  CCM3310_WriteBuf[cnt++] = 0x10;
+  CCM3310_WriteBuf[cnt++] = 0x33;
 
-	//data part length
-	SPI_ReadWriteOneByte(0x86);  //  32+4+98个数据 134
-	SPI_ReadWriteOneByte(0x00);
-	SPI_ReadWriteOneByte(0x00);
-	SPI_ReadWriteOneByte(0x00);
+  //data part length
+  CCM3310_WriteBuf[cnt++] = 0x86;  //  32+4+98个数据 134
+  CCM3310_WriteBuf[cnt++] = 0x00;
+  CCM3310_WriteBuf[cnt++] = 0x00;
+  CCM3310_WriteBuf[cnt++] = 0x00;
 
-	//cmd
-	SPI_ReadWriteOneByte(0x80);   //CLA
-	SPI_ReadWriteOneByte(0x66);   //INS
-	SPI_ReadWriteOneByte(0x01);   //use the key from comunication data
-	SPI_ReadWriteOneByte(0x00);
+  //cmd
+  CCM3310_WriteBuf[cnt++] = 0x80;  //CLA
+  CCM3310_WriteBuf[cnt++] = SM2_Decrypt_INS;
+  CCM3310_WriteBuf[cnt++] = 0x01;  //use the key from comunication data
+  CCM3310_WriteBuf[cnt++] = 0x00;
 
-	//reserve
-	SPI_ReadWriteOneByte(0x55);
-	SPI_ReadWriteOneByte(0x55);
-	SPI_ReadWriteOneByte(0x55);
-	SPI_ReadWriteOneByte(0x55);
+  //reserve
+  CCM3310_WriteBuf[cnt++] = 0x55;
+  CCM3310_WriteBuf[cnt++] = 0x55;
+  CCM3310_WriteBuf[cnt++] = 0x55;
+  CCM3310_WriteBuf[cnt++] = 0x55;
 
 	//---------------------------------------------//
 	//data part
 	//Private_Key
 	for(i=0;i<32;i++)
-	{
-		SPI_ReadWriteOneByte(Private_Key[i]);
+	{		
+    CCM3310_WriteBuf[cnt++] = Private_Key[i];
 	}
-	//data len
-	SPI_ReadWriteOneByte(0x62);   //98 only test
-	SPI_ReadWriteOneByte(0x00);
-	SPI_ReadWriteOneByte(0x00);
-	SPI_ReadWriteOneByte(0x00);
+
+  //data len
+  CCM3310_WriteBuf[cnt++] = 0x62;  //98 only test
+  CCM3310_WriteBuf[cnt++] = 0x55;
+  CCM3310_WriteBuf[cnt++] = 0x55;
+  CCM3310_WriteBuf[cnt++] = 0x55;
 
 	//Computed_EncryptData
 	for(i=0;i<98;i++)
-	{
-		SPI_ReadWriteOneByte(Computed_EncryptData[i]);
+	{		
+    CCM3310_WriteBuf[cnt++] = Computed_EncryptData[i];
 	}
-	//---------------------------------------------//
-
+	
 	 //tail
-	SPI_ReadWriteOneByte(0x55);
-	SPI_ReadWriteOneByte(0x02);
-	SPI_ReadWriteOneByte(0x33);
-	SPI_ReadWriteOneByte(0x01);
+  CCM3310_WriteBuf[cnt++] = 0x55;
+  CCM3310_WriteBuf[cnt++] = 0x02;
+  CCM3310_WriteBuf[cnt++] = 0x33;
+  CCM3310_WriteBuf[cnt++] = 0x01;
 
-	/*5. 拉高片选*/
-	 
+  ret = transfer(spifd, CCM3310_WriteBuf, CCM3310_ReadBuf, cnt);
+  if (-1 == ret)
+  {
+    printf("transfer error...\n");
+  }
+
+  //---------------------------------------------//
 
 	ccm3310s_Check_Ready();
 
-	/*1. 拉低片选*/
-	 
-
-	//read
-	for(i=0;i<22;i++)  //16+2+4
-	{
-		readbuf[i]=SPI_ReadWriteOneByte(0xFF);
-	}
-
-	/*5. 拉高片选*/
-	 
+	
+  ret = transfer(spifd, CCM3310_WriteBuf, CCM3310_ReadBuf, 16 + 2 + 4);
+  if (-1 == ret)
+  {
+    printf("transfer error...\n");
+  }
 
 	//---------------------------------------------//
 	printf("SM2解密开始! \r\n");

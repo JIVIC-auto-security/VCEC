@@ -42,10 +42,10 @@ void Write_analyse(void)
     printf("Hash_Update\r\n");
   else if (ins == Hash_Final_INS)
     printf("Hash_Final\n");
-
+  else if (ins == SM2_Encrypt_INS)
+    printf("SM2_Encrypt\n");
 
   printf(" send data:\r\n");
-
 
   uint32_t length;
   uint16_t LO_WORD_len, HI_WORD_len;
@@ -90,11 +90,11 @@ void Write_analyse(void)
   printf("\r\n");
 
   //----------------------------------------------//
-  if (CCM3310_WriteBuf[9] == 0x48)  //hash init
+  if (CCM3310_WriteBuf[9] == Hash_Init_INS)  //hash init
   {
     printf("no data part \r\n");
   }
-  else if (CCM3310_WriteBuf[9] == 0x4A)  //hash update
+  else if (CCM3310_WriteBuf[9] == Hash_Update_INS)  //hash update
   {
     printf("data part:	\r\n");
 
@@ -122,7 +122,7 @@ void Write_analyse(void)
     }
     printf("\r\n");
   }
-  else if (CCM3310_WriteBuf[9] == 0x4C)  //hash Final
+  else if (CCM3310_WriteBuf[9] == Hash_Final_INS)  //hash Final
   {
     printf("数据部分:	\r\n");
 
@@ -150,18 +150,8 @@ void Write_analyse(void)
     }
     printf("\r\n");
   }
-  else if (CCM3310_WriteBuf[9] == 0x4E)  //hash onece
-  {
-    printf("传入消息数据:	\r\n");
 
-    for (i = 0; i < length; i++)
-    {
-      printf("%02X ", CCM3310_WriteBuf[cnt]);
-      cnt++;
-    }
-    printf("\r\n");
-  }
-  else
+  else if (CCM3310_WriteBuf[9] == SM2_Seed_Sign_INS)
   {
     /*	printf("数据部分:	\r\n");
 
@@ -196,7 +186,17 @@ void Write_analyse(void)
     //		cnt++;
     //	}
     printf("\r\n");
+  }
+  else   //others
+  {
+    printf("input data part:	\r\n");
 
+    for (i = 0; i < length; i++)
+    {
+      printf("%02X ", CCM3310_WriteBuf[cnt]);
+      cnt++;
+    }
+    printf("\r\n");
   }
 
   //----------------------------------------------//
@@ -232,14 +232,14 @@ void Read_analyse(void)
     printf("Hash_Update\r\n");
   else if (ins == Hash_Final_INS)
     printf("Hash_Final\r\n");
-  else if (ins == Hash_Final_INS)
-    printf("Hash_Final\r\n");
   else if (ins == Hash_Once_INS)
     printf("Hash_Once\r\n");
   else if (ins == SM2_Calc_Z_INS)
     printf("SM2_Calc_Z\r\n");
   else if (ins == SM2_Verify_INS)
     printf("SM2_Verify\r\n");
+  else if (ins == SM2_Encrypt_INS)
+    printf("SM2_Encrypt\n");
 
   printf(" replay data:\r\n");
 
