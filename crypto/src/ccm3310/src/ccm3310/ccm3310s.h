@@ -70,6 +70,9 @@ uint8_t SM2_Calc_HASH(uint8_t* Inupt_Message, uint8_t InputLen, uint8_t Key_ID, 
 
 uint8_t SM2_Seed_Sign(uint8_t Key_ID,uint8_t* Hash_Val,uint8_t* Output_Signature);
 
+
+
+
 void SM2_Verify2(void);
 
 void SM2_Encrypt(void);

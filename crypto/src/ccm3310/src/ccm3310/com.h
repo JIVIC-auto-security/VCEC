@@ -18,20 +18,21 @@
 
 
 //function id
-#define GetVersion_INS     0x30
-#define GetSN_INS          0x32
+#define GetVersion_INS        0x30
+#define GetSN_INS             0x32
 
-#define GetRandom_INS      0x40
-#define Hash_Init_INS      0x48
-#define Hash_Update_INS    0x4A
-#define Hash_Final_INS     0x4C
+#define GetRandom_INS         0x40
+#define Hash_Init_INS         0x48
+#define Hash_Update_INS       0x4A
+#define Hash_Final_INS        0x4C
 
-#define Hash_Once_INS     0x4E
+#define Hash_Once_INS         0x4E
 
-#define Import_Key_INS     0x5C
-#define SM2_Calc_Z_INS     0x6A
+#define Import_Key_INS        0x5C
+#define SM2_Seed_Sign_INS     0x6E
 
-#define SM2_Verify_INS     0x62
+#define SM2_Calc_Z_INS        0x6A
+#define SM2_Verify_INS        0x62
 
 
 //‘”¥’À„∑®£∫ 0x00 SM3 £©°¢ 0x01 SHA0 £©°¢0x02 SHA1 £©°¢ 0x03 SHA224 £©°¢ 0x04 SHA256

@@ -63,21 +63,10 @@ void ccm3310s_GetVersion(void)
     printf("transfer error...\n");
   }
 
-  ///*打印  CCM3310_ReadBuf   无意义的数据*/
-  //printf("CCM3310_ReadBuf size %d:\n ", cnt);
-  //for (int i = 0; i < cnt; i++)    //read bytes!
-  //{
-  //  printf(" %02X ", CCM3310_ReadBuf[i]);
-  //}
-  //printf("\r\n ");
 
   //----------------------------------------------------------------//
-#if( USB_READY_IO == 1 )
   ccm3310s_Check_Ready();
-#else
-  usleep(200000);  //200ms
-#endif      
-
+   
   //read
   //DEBUG("spi read \r\n ");
   ret = transfer(spifd, FILLBuf, CCM3310_ReadBuf, (16 + 80 + 4));

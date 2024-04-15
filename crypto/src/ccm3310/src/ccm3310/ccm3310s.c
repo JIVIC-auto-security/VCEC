@@ -1805,99 +1805,99 @@ void ccm3310s_SM2_Sign(void)
 //Sign with fix random number
 uint8_t SM2_Seed_Sign(uint8_t Key_ID,uint8_t* Hash_Val,uint8_t* Output_Signature)
 {
-	uint8_t i;
+  uint8_t ret = 0;	
 	uint8_t cnt = 0;
+
+  uint8_t i;
 
 	ccm3310s_Check_Ready();
 
-	/*1. 拉低片选*/
-	 
+  ins = SM2_Seed_Sign_INS;
 
-	//head
-	SPI_ReadWriteOneByte(0x53);
-	SPI_ReadWriteOneByte(0x02);
-	SPI_ReadWriteOneByte(0x10);
-	SPI_ReadWriteOneByte(0x33);
+  //head
+  CCM3310_WriteBuf[cnt++] = 0x53;
+  CCM3310_WriteBuf[cnt++] = 0x02;
+  CCM3310_WriteBuf[cnt++] = 0x10;
+  CCM3310_WriteBuf[cnt++] = 0x33;
 
-	//length
-	SPI_ReadWriteOneByte(0x44);  // 68
-	SPI_ReadWriteOneByte(0x00);
-	SPI_ReadWriteOneByte(0x00);
-	SPI_ReadWriteOneByte(0x00);
+  //length
+  CCM3310_WriteBuf[cnt++] = 0x44;  // 68
+  CCM3310_WriteBuf[cnt++] = 0x00;
+  CCM3310_WriteBuf[cnt++] = 0x00;
+  CCM3310_WriteBuf[cnt++] = 0x00;
+	
+  //cmd
+  CCM3310_WriteBuf[cnt++] = 0x80;  //CLA
+  CCM3310_WriteBuf[cnt++] = SM2_Seed_Sign_INS;
+  CCM3310_WriteBuf[cnt++] = 0x00;    //use the key in chip
+  CCM3310_WriteBuf[cnt++] = 0x00;
 
-
-	//cmd
-	SPI_ReadWriteOneByte(0x80);   //CLA
-	SPI_ReadWriteOneByte(0x6E);   //INS
-	SPI_ReadWriteOneByte(0x00);   //use the key in chip
-	SPI_ReadWriteOneByte(0x00);
-
-	//reserve
-	SPI_ReadWriteOneByte(0x55);
-	SPI_ReadWriteOneByte(0x55);
-	SPI_ReadWriteOneByte(0x55);
-	SPI_ReadWriteOneByte(0x55);
+  //reserve
+  CCM3310_WriteBuf[cnt++] = 0x55;  
+  CCM3310_WriteBuf[cnt++] = 0x55;
+  CCM3310_WriteBuf[cnt++] = 0x55;    
+  CCM3310_WriteBuf[cnt++] = 0x55;
 
 	//---------------------------------------------//
-	//data part
-	SPI_ReadWriteOneByte(Key_ID);    //key id
-	SPI_ReadWriteOneByte(0x00);      //reverse
-	SPI_ReadWriteOneByte(0x00); 	 //reverse
-	SPI_ReadWriteOneByte(0x00);      //reverse
+  //data part
+  CCM3310_WriteBuf[cnt++] = Key_ID;   //key id
+  CCM3310_WriteBuf[cnt++] = 0x00;     //reverse
+  CCM3310_WriteBuf[cnt++] = 0x00;     //reverse
+  CCM3310_WriteBuf[cnt++] = 0x00;     //reverse
 
 	//seed random number
 	for(i=0;i<32;i++)
-	{
-		SPI_ReadWriteOneByte(Known_Random[i]);
+	{	
+    CCM3310_WriteBuf[cnt++] = Known_Random[i];
 	}
 	//data
 	for(i=0;i<32;i++)
-	{
-		SPI_ReadWriteOneByte(Hash_Val[i]);
+	{		
+    CCM3310_WriteBuf[cnt++] = Hash_Val[i];
 	}
 
 	//---------------------------------------------//
 
-	 //tail
-	SPI_ReadWriteOneByte(0x55);
-	SPI_ReadWriteOneByte(0x02);
-	SPI_ReadWriteOneByte(0x33);
-	SPI_ReadWriteOneByte(0x01);
+  //tail
+  CCM3310_WriteBuf[cnt++] = 0x55;
+  CCM3310_WriteBuf[cnt++] = 0x02;
+  CCM3310_WriteBuf[cnt++] = 0x33;
+  CCM3310_WriteBuf[cnt++] = 0x01;
 
+  ret = transfer(spifd, CCM3310_WriteBuf, CCM3310_ReadBuf, cnt);
+  if (-1 == ret)
+  {
+    printf("transfer error...\n");
+  }
 
-	/*5. 拉高片选*/
-	 
+  //----------------------------------------------------------------//
 
 	ccm3310s_Check_Ready();
 
-	/*1. 拉低片选*/
-	 
+  //read
+//DEBUG("spi read \r\n ");
+  ret = transfer(spifd, FILLBuf, CCM3310_ReadBuf, (16 + 64 + 4));
+  if (-1 == ret)
+  {
+    printf("transfer error...\n");
+  }
+  //-------------------------------------------------//
+
 
 	//read
 	for(i=0;i<16;i++)    //read bytes!
-	{
-		CCM3310_ReadBuf[i]=SPI_ReadWriteOneByte(0xFF);
+	{		
 	}
 
 	for(i=0;i<64;i++)    //read bytes!
-	{
-		CCM3310_ReadBuf[16+i]=SPI_ReadWriteOneByte(0xFF);
-
+	{		
 		Output_Signature[i] =  CCM3310_ReadBuf[16+i];   //save Signature value
 	}
 
 	for(i=0;i<4;i++)    //read bytes!
-	{
-		CCM3310_ReadBuf[16+64+i]=SPI_ReadWriteOneByte(0xFF);
+	{		
 	}
-
-
-	/*5. 拉高片选*/
-	 
-
 	//---------------------------------------------//
-	
-#ifdef LARRY_DEBUG_CCM3310	
 
 	//printf
 	printf("\r\n sm2 sign replay\r\n");
@@ -1905,9 +1905,7 @@ uint8_t SM2_Seed_Sign(uint8_t Key_ID,uint8_t* Hash_Val,uint8_t* Output_Signature
 	Read_analyse();
 
 	printf("SM2 sign success\r\n\r\n");
-	
-#endif
-	
+		
 	//return
 	if( (CCM3310_ReadBuf[STATE_OK_HB_P]==0x90)&&(CCM3310_ReadBuf[STATE_OK_LB_P]==0x00))   //90 00   正确执行
 		return 1;  // 正确执行
