@@ -2327,6 +2327,9 @@ void SM2_Encrypt(void)
     printf("transfer error...\n");
   }
 
+  //copy data
+  memcpy(Computed_EncryptData, &CCM3310_ReadBuf[16], 98);
+
 	//---------------------------------------------//
 
   Write_analyse();
@@ -2405,7 +2408,6 @@ void SM2_Decrypt(void)
   //---------------------------------------------//
 
 	ccm3310s_Check_Ready();
-
 	
   ret = transfer(spifd, CCM3310_WriteBuf, CCM3310_ReadBuf, 16 + 2 + 4);
   if (-1 == ret)
@@ -2414,66 +2416,10 @@ void SM2_Decrypt(void)
   }
 
 	//---------------------------------------------//
-	printf("SM2解密开始! \r\n");
-	printf("下发给国芯加密芯片数据包:\r\n");
-	printf("53 02 10 33 86 00 00 00 80 66 01 00 55 55 55 55\r\n");
-	printf("6C B2 8D 99 38 5C 17 5C 94 F9 4E 93 48 17 66 3F C1 76 D9 25 DD 72 B7 27 26 0D BA AE 1F B2 F9 6F  \r\n");
-	printf("62 00 00 00 \r\n");
 
-	//Computed_EncryptData
-	for(i=0;i<98;i++)
-	{
-		printf("%02x ",Computed_EncryptData[i]);
-	}
+  Write_analyse();
 
-	printf("55 02 33 01\r\n");
-
-	printf("\r\n分析下发数据包:\r\n");
-	printf("包头占4字节:    	53 02 10 33   \r\n");
-	printf("数据长度占4字节 :	86 00 00 00  数据段部分字节长度134个字节\r\n");
-	printf("使用数据段中密钥:	80 66 01 00 \r\n");
-	printf("保留字段占4字节:	55 55 55 55  \r\n");
-	printf("私钥32字节:		6C B2 8D 99 38 5C 17 5C 94 F9 4E 93 48 17 66 3F C1 76 D9 25 DD 72 B7 27 26 0D BA AE 1F B2 F9 6F  \r\n");
-	printf("解密数据长度占4字节	62 00 00 00  \r\n");
-	printf("要解密数据 \r\n");
-	for(i=0;i<98;i++)
-	{
-		printf("%02x ",Computed_EncryptData[i]);
-	}
-	printf("\r\n下发包尾:		55 02 33 01  \r\n");
-
-	//printf
-	printf("\r\nSM2国芯芯片解密上行回复 \r\n");
-	for(i=0;i<16;i++)
-	{
-		printf("%02x ",readbuf[i]);
-	}
-	printf("\r\n");
-
-	printf("Orignal data  \r\n");
-	for(i=0;i<2;i++)
-	{
-		printf("%02x ",readbuf[16+i]);
-	}
-	printf("\r\n");
-
-	for(i=0;i<4;i++)
-	{
-		printf("%02x ",readbuf[16+2+i]);
-	}
-	printf("\r\n");
-	printf("\r\n");
-
-
-	printf("\r\n分析上行回复数据包:\r\n");
-	printf("包头占4字节:    	52 02 10 33   \r\n");
-	printf("数据长度占4字节 :	02 00 00 00  数据段部分字节长度2个字节\r\n");
-	printf("状态字占2字节:	    	00 90  	表示解密密成功\r\n");
-	printf("保留字段6字节:	    	5A 5A 5A 5A 5A 5A  \r\n");
-	printf("解密后原始数据:	 	01 02\r\n");
-	printf("上行包尾:		56 02 33 01   \r\n");
-
-	printf("SM2 解密成功! \r\n\r\n");
+  Read_analyse();
 
 }
 

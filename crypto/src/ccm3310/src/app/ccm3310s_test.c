@@ -61,6 +61,7 @@ int main(int argc, char* argv[])
     SM2_Encrypt();
   }
   else if (!strcmp(argv[1], "SM2_Decrypt")) {
+    SM2_Encrypt();
     SM2_Decrypt();
   }
   else if (!strcmp(argv[1], "SM2_Seed_Sign")) {

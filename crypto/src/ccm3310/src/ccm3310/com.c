@@ -44,6 +44,8 @@ void Write_analyse(void)
     printf("Hash_Final\n");
   else if (ins == SM2_Encrypt_INS)
     printf("SM2_Encrypt\n");
+  else if (ins == SM2_Encrypt_INS)
+    printf("SM2_Encrypt\n");  
 
   printf(" send data:\r\n");
 
@@ -240,6 +242,8 @@ void Read_analyse(void)
     printf("SM2_Verify\r\n");
   else if (ins == SM2_Encrypt_INS)
     printf("SM2_Encrypt\n");
+  else if (ins == SM2_Decrypt_INS)
+    printf("SM2_Decrypt\n");
 
   printf(" replay data:\r\n");
 
