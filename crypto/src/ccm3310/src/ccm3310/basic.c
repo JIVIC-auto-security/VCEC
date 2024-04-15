@@ -21,9 +21,7 @@ void ccm3310s_GetVersion(void)
   uint8_t cnt = 0;
   uint8_t ret = 0;
 
-#if( USB_READY_IO == 1 )
   ccm3310s_Check_Ready();
-#endif
 
   ins = GetVersion_INS;
   //---------------------------------//

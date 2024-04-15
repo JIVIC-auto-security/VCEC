@@ -2253,79 +2253,82 @@ void SM2_Verify2(void)
 
 void SM2_Encrypt(void)
 {
+  uint8_t cnt = 0;
+  uint8_t ret = 0;
+
 	uint8_t readbuf[100];
 	uint8_t i;
 
 	ccm3310s_Check_Ready();
 
-	/*1. 拉低片选*/
-	 
+  ins = SM2_Encrypt_INS;
 
-	//head
-	SPI_ReadWriteOneByte(0x53);
-	SPI_ReadWriteOneByte(0x02);
-	SPI_ReadWriteOneByte(0x10);
-	SPI_ReadWriteOneByte(0x33);
+  //head
+  CCM3310_WriteBuf[cnt++] = 0x53;
+  CCM3310_WriteBuf[cnt++] = 0x02;
+  CCM3310_WriteBuf[cnt++] = 0x10;
+  CCM3310_WriteBuf[cnt++] = 0x33;
 
-	//length
-	SPI_ReadWriteOneByte(0x46);  // 70
-	SPI_ReadWriteOneByte(0x00);
-	SPI_ReadWriteOneByte(0x00);
-	SPI_ReadWriteOneByte(0x00);
 
-	//cmd
-	SPI_ReadWriteOneByte(0x80);   //CLA
-	SPI_ReadWriteOneByte(0x64);   //INS
-	SPI_ReadWriteOneByte(0x01);   //use the key from comunication data
-	SPI_ReadWriteOneByte(0x00);
+  //length
+  CCM3310_WriteBuf[cnt++] = 0x46; // 70
+  CCM3310_WriteBuf[cnt++] = 0x00;
+  CCM3310_WriteBuf[cnt++] = 0x00;
+  CCM3310_WriteBuf[cnt++] = 0x00;
+	
 
-	//reserve
-	SPI_ReadWriteOneByte(0x55);
-	SPI_ReadWriteOneByte(0x55);
-	SPI_ReadWriteOneByte(0x55);
-	SPI_ReadWriteOneByte(0x55);
+  //cmd
+  CCM3310_WriteBuf[cnt++] = 0x80; // CLA
+  CCM3310_WriteBuf[cnt++] = SM2_Encrypt_INS;
+  CCM3310_WriteBuf[cnt++] = 0x01;   //use the key from comunication data
+  CCM3310_WriteBuf[cnt++] = 0x00;
+
+  //reserve
+  CCM3310_WriteBuf[cnt++] = 0x55;
+  CCM3310_WriteBuf[cnt++] = 0x55;
+  CCM3310_WriteBuf[cnt++] = 0x55;
+  CCM3310_WriteBuf[cnt++] = 0x55;
 
 	//---------------------------------------------//
 	//data part
 	//pub_key
 	for(i=0;i<64;i++)
-	{
-		SPI_ReadWriteOneByte(Public_Key[i]);
+	{		
+    CCM3310_WriteBuf[cnt++] = Public_Key[i];
 	}
 	//data len
-	SPI_ReadWriteOneByte(0x02);
-	SPI_ReadWriteOneByte(0x00);
-	SPI_ReadWriteOneByte(0x00);
-	SPI_ReadWriteOneByte(0x00);
+  CCM3310_WriteBuf[cnt++] = 0x02;
+  CCM3310_WriteBuf[cnt++] = 0x00;
+  CCM3310_WriteBuf[cnt++] = 0x00;
+  CCM3310_WriteBuf[cnt++] = 0x00;
 
 	//data
-	SPI_ReadWriteOneByte(0x01);
-	SPI_ReadWriteOneByte(0x02);
-	//---------------------------------------------//
+  CCM3310_WriteBuf[cnt++] = 0x01;
+  CCM3310_WriteBuf[cnt++] = 0x02;
 
 	 //tail
-	SPI_ReadWriteOneByte(0x55);
-	SPI_ReadWriteOneByte(0x02);
-	SPI_ReadWriteOneByte(0x33);
-	SPI_ReadWriteOneByte(0x01);
+  CCM3310_WriteBuf[cnt++] = 0x55;
+  CCM3310_WriteBuf[cnt++] = 0x02;
+  CCM3310_WriteBuf[cnt++] = 0x33;
+  CCM3310_WriteBuf[cnt++] = 0x01;
 
-	/*5. 拉高片选*/
-	 
+  ret = transfer(spifd, CCM3310_WriteBuf, CCM3310_ReadBuf, cnt);
+  if (-1 == ret)
+  {
+    printf("transfer error...\n");
+  }
+
+  //---------------------------------------------//
 
 	ccm3310s_Check_Ready();
 
-	/*1. 拉低片选*/
-	 
-
-	//read
-	for(i=0;i<118;i++)  //16+98+4
-	{
-		readbuf[i]=SPI_ReadWriteOneByte(0xFF);
-	}
-
-	/*5. 拉高片选*/
-	 
-
+  //read  
+  ret = transfer(spifd, FILLBuf, CCM3310_ReadBuf, (16 + 98 + 4));
+  if (-1 == ret)
+  {
+    printf("transfer error...\n");
+  }
+	
 	//---------------------------------------------//
 	printf("SM2加密开始! \r\n");
 	printf("下发给国芯加密芯片数据包:\r\n");

@@ -29,6 +29,9 @@
 #define Hash_Once_INS         0x4E
 
 #define Import_Key_INS        0x5C
+
+#define SM2_Encrypt_INS       0x64
+
 #define SM2_Seed_Sign_INS     0x6E
 
 #define SM2_Calc_Z_INS        0x6A
